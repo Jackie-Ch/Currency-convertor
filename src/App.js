@@ -4,8 +4,8 @@ import './index.scss';
 
 function App() {
   const [fromCurrency, setFromCurrency] = useState('RUB');
-  const [fromPrice, setFromPrice] = useState(0);
   const [toCurrency, setToCurrency] = useState('USD');
+  const [fromPrice, setFromPrice] = useState(0);
   const [toPrice, setToPrice] = useState(0);
   const [rates, setRates] = useState({});
 
@@ -15,19 +15,29 @@ function App() {
       .then((result) => {
         setRates(result.rates);
       });
-  }, [fromCurrency, fromPrice, toCurrency, toPrice]);
+  }, []);
 
-  function onChangeFromPrice(value) {
+  const onChangeFromPrice = (value) => {
     const price = value / rates[fromCurrency];
     const result = price * rates[toCurrency];
-    setToPrice(result);
+    setToPrice(result.toFixed(3));
     setFromPrice(value);
-  }
-  function onChangeToPrice(value) {
-    const result = rates[fromCurrency] / rates[toCurrency];
-    setFromPrice(result);
+  };
+  const onChangeToPrice = (value) => {
+    const result = (rates[fromCurrency] / rates[toCurrency]) * value;
+    setFromPrice(result.toFixed(3));
     setToPrice(value);
-  }
+  };
+
+  useEffect(() => {
+    onChangeFromPrice(fromPrice);
+    // eslint-disable-next-line
+  }, [toCurrency, toPrice]);
+
+  useEffect(() => {
+    onChangeToPrice(toPrice);
+    // eslint-disable-next-line
+  }, [fromCurrency, fromPrice]);
 
   return (
     <div className="App">
